@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Calendar } from 'lucide-react'
 
 interface DateInputProps {
@@ -9,19 +9,21 @@ interface DateInputProps {
   placeholder?: string
   min?: string
   className?: string
+  name?: string
+  autoComplete?: string
 }
 
-export default function DateInput({ 
-  label, 
-  value, 
-  onChange, 
-  error, 
+export default function DateInput({
+  label,
+  value,
+  onChange,
+  error,
   placeholder = "dd/mm/aaaa",
   min,
-  className = '' 
+  className = '',
+  name,
+  autoComplete,
 }: DateInputProps) {
-  const [inputType, setInputType] = useState<'text' | 'date'>('text')
-
   const formatDateInput = (input: string) => {
     // Remove tudo que não é número
     const numbers = input.replace(/\D/g, '')
@@ -90,11 +92,7 @@ export default function DateInput({
     }
   }
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value)
-  }
-
-  const displayValue = inputType === 'text' ? convertFromISODate(value) : value
+  const displayValue = convertFromISODate(value)
 
   return (
     <div className="space-y-1">
@@ -108,22 +106,15 @@ export default function DateInput({
           <Calendar className="h-4 w-4 text-gray-400" />
         </div>
         <input
-          type={inputType}
+          type="text"
           value={displayValue}
-          onChange={inputType === 'text' ? handleTextChange : handleDateChange}
-          onFocus={() => {
-            // Em dispositivos móveis, mantém como text para facilitar digitação
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-            if (!isMobile) {
-              setInputType('date')
-            }
-          }}
-          onBlur={() => setInputType('text')}
+          onChange={handleTextChange}
+          name={name}
+          autoComplete={autoComplete}
           placeholder={placeholder}
-          min={min}
-          maxLength={inputType === 'text' ? 10 : undefined}
+          maxLength={10}
           className={`
-            block w-full rounded-lg border border-gray-300 pl-10 pr-3 py-2 
+            block w-full rounded-lg border border-gray-300 pl-10 pr-3 py-2
             placeholder-gray-400 shadow-sm transition-colors duration-200
             focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
             ${error ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}

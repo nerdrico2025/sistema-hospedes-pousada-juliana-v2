@@ -33,9 +33,14 @@ export default function LoginAdmin() {
         .eq('usuario', formData.usuario)
         .eq('senha', formData.senha)
         .single()
-      
+
       if (error || !data) {
         setError('Usuário ou senha incorretos')
+        return
+      }
+
+      if (data.ativo === false) {
+        setError('Usuário desativado. Entre em contato com o administrador.')
         return
       }
       
@@ -43,7 +48,8 @@ export default function LoginAdmin() {
       localStorage.setItem('admin_logado', JSON.stringify({
         id: data.id,
         nome: data.nome,
-        usuario: data.usuario
+        usuario: data.usuario,
+        perfil: data.perfil ?? null,
       }))
       
       navigate('/admin')
