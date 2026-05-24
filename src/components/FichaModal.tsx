@@ -124,9 +124,11 @@ export default function FichaModal({ hospedeId, hospedagemId, onClose }: Props) 
     if (!printWindow) return
     printWindow.document.write(`<!DOCTYPE html><html><head><title>Ficha do Hóspede</title><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#fff}</style></head><body>${fichaHTML}</body></html>`)
     printWindow.document.close()
-    printWindow.focus()
-    printWindow.print()
-    printWindow.close()
+    setTimeout(() => {
+      printWindow.focus()
+      printWindow.print()
+      printWindow.onafterprint = () => printWindow.close()
+    }, 500)
   }
 
   return (
